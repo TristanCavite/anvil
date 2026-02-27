@@ -10,7 +10,7 @@
 | ...                   | ...           |
 
 ## AV.010.001 Release Notes
-* https://github.com/TristanCavite/anvil.git
+* https://github.com/TristanCavite/anvil
 * update README
 
 ## AV.010.000 Release Notes
