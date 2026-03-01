@@ -6,9 +6,9 @@ node_modules/
 out/
 
 # env files (secrets)
-#.env
-#.env.*.local
-#.env.local
+.env
+.env.*.local
+.env.local
 
 # logs
 npm-debug.log*
