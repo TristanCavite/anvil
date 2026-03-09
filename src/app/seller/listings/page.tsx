@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from 'lib/supabase/server'
+import DeleteListingButton from './DeleteListingButton'
 
 const STATUS_STYLES: Record<string, string> = {
   draft:    'bg-gray-100 text-gray-600',
@@ -27,7 +28,7 @@ export default async function SellerListingsPage() {
   const { data: listings } = await supabase
     .from('listings')
     .select('id, title, status, price, currency, quantity, pickup_start, pickup_end, created_at')
-    .eq('seller_id', business.id)
+    .eq('seller_business_id', business.id)
     .order('created_at', { ascending: false })
 
   return (
@@ -132,6 +133,9 @@ export default async function SellerListingsPage() {
                       >
                         Edit
                       </Link>
+                      {listing.status === 'draft' && (
+                        <DeleteListingButton listingId={listing.id} />
+                      )}
                     </td>
                   </tr>
                 ))}

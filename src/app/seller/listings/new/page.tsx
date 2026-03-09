@@ -52,6 +52,7 @@ export default function NewListingPage() {
 
   // UI state
   const [sellerId, setSellerId]     = useState<string | null>(null)
+  const [userId, setUserId]         = useState<string | null>(null)
   const [loading, setLoading]       = useState(false)
   const [error, setError]           = useState<string | null>(null)
   const [photoError, setPhotoError] = useState<string | null>(null)
@@ -70,6 +71,7 @@ export default function NewListingPage() {
 
       if (!biz) { router.push('/seller/onboarding'); return }
       setSellerId(biz.id)
+      setUserId(user.id)
     }
     load()
   }, [])
@@ -133,31 +135,41 @@ export default function NewListingPage() {
     setLoading(true)
 
     try {
-      // 1. Insert listing
+      // 1. Insert listing — RLS requires status = 'draft' on insert
       const { data: listing, error: insertError } = await supabase
         .from('listings')
         .insert({
-          seller_id:    sellerId,
-          title:        title.trim(),
-          description:  description.trim() || null,
+          seller_business_id: sellerId,
+          title:              title.trim(),
+          description:        description.trim() || null,
           category,
-          price:        parseFloat(price),
-          currency:     'PHP',
-          quantity:     parseInt(quantity, 10),
-          pickup_start: pickupStart || null,
-          pickup_end:   pickupEnd   || null,
-          status:       publish ? 'active' : 'draft',
+          price:              parseFloat(price),
+          currency:           'PHP',
+          quantity:           parseInt(quantity, 10),
+          quantity_available: parseInt(quantity, 10),
+          pickup_start:       pickupStart || null,
+          pickup_end:         pickupEnd   || null,
+          status:             'draft',
         })
         .select('id')
         .single()
 
       if (insertError || !listing) throw new Error(insertError?.message ?? 'Failed to create listing.')
 
+      // 2. If publish toggle is on, update to active (separate step — RLS allows UPDATE to active)
+      if (publish) {
+        const { error: publishError } = await supabase
+          .from('listings')
+          .update({ status: 'active' })
+          .eq('id', listing.id)
+        if (publishError) throw new Error(`Published but status update failed: ${publishError.message}`)
+      }
+
       // 2. Upload photos
       for (let i = 0; i < photos.length; i++) {
         const photo = photos[i]
         const ext   = photo.file.name.split('.').pop() ?? 'jpg'
-        const path  = `${listing.id}/${Date.now()}_${i}.${ext}`
+        const path  = `${userId}/${listing.id}/${Date.now()}_${i}.${ext}`
 
         const { error: uploadError } = await supabase.storage
           .from('listing-photos')
@@ -165,14 +177,10 @@ export default function NewListingPage() {
 
         if (uploadError) throw new Error(`Photo ${i + 1} upload failed: ${uploadError.message}`)
 
-        const { data: urlData } = supabase.storage
-          .from('listing-photos')
-          .getPublicUrl(path)
-
         await supabase.from('listing_photos').insert({
-          listing_id: listing.id,
-          url:        urlData.publicUrl,
-          sort_order: i,
+          listing_id:   listing.id,
+          storage_path: path,
+          sort_order:   i,
         })
       }
 

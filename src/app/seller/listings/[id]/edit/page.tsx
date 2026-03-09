@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from 'lib/supabase/browser'
@@ -23,24 +23,24 @@ const CATEGORIES = [
 const MAX_PHOTOS = 5
 const MAX_PHOTO_MB = 5
 
-interface ExistingPhoto { id: string; url: string; sort_order: number }
+interface ExistingPhoto { id: string; storage_path: string; url: string; sort_order: number }
 interface NewPhoto { file: File; preview: string }
 
-// Status a seller is allowed to set
-const SELLER_STATUSES = ['draft', 'active', 'removed'] as const
+// Status options available to sellers
+const SELLER_STATUSES = ['draft', 'active'] as const
 type SellerStatus = typeof SELLER_STATUSES[number]
 
 const STATUS_LABELS: Record<SellerStatus, string> = {
-  draft:   'Draft',
-  active:  'Active (visible to buyers)',
-  removed: 'Remove listing',
+  draft:  'Draft — hidden from buyers',
+  active: 'Active — visible to buyers',
 }
 
-export default function EditListingPage({ params }: { params: { id: string } }) {
+export default function EditListingPage() {
   const supabase = createClient()
   const router   = useRouter()
   const fileRef  = useRef<HTMLInputElement>(null)
-  const { id: listingId } = params
+  const params   = useParams()
+  const listingId = params.id as string
 
   // Form state
   const [title, setTitle]           = useState('')
@@ -59,6 +59,7 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
 
   // UI
   const [sellerId, setSellerId]     = useState<string | null>(null)
+  const [userId, setUserId]         = useState<string | null>(null)
   const [loading, setLoading]       = useState(false)
   const [fetching, setFetching]     = useState(true)
   const [error, setError]           = useState<string | null>(null)
@@ -77,15 +78,20 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
         .single()
       if (!biz) { router.push('/seller/onboarding'); return }
       setSellerId(biz.id)
+      setUserId(user.id)
 
       const { data: listing, error: fetchError } = await supabase
         .from('listings')
-        .select('*, listing_photos(id, url, sort_order)')
+        .select('*, listing_photos(id, storage_path, sort_order)')
         .eq('id', listingId)
-        .eq('seller_id', biz.id)
+        .eq('seller_business_id', biz.id)
         .single()
 
-      if (fetchError || !listing) { router.push('/seller/listings'); return }
+      if (fetchError || !listing) {
+        console.error('Edit page fetch error:', fetchError?.message, '| listingId:', listingId, '| biz.id:', biz.id)
+        router.push('/seller/listings')
+        return
+      }
 
       setTitle(listing.title ?? '')
       setDescription(listing.description ?? '')
@@ -94,10 +100,16 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
       setQuantity(String(listing.quantity ?? 1))
       setPickupStart(listing.pickup_start ? listing.pickup_start.slice(0, 16) : '')
       setPickupEnd(listing.pickup_end   ? listing.pickup_end.slice(0, 16)   : '')
-      setStatus((listing.status as SellerStatus) ?? 'draft')
+      // 'removed' is an admin-only status — sellers see it as draft
+      const loadedStatus = listing.status as string
+      setStatus(SELLER_STATUSES.includes(loadedStatus as SellerStatus) ? (loadedStatus as SellerStatus) : 'draft')
 
       const photos: ExistingPhoto[] = (listing.listing_photos ?? [])
         .sort((a: ExistingPhoto, b: ExistingPhoto) => a.sort_order - b.sort_order)
+        .map((p: { id: string; storage_path: string; sort_order: number }) => ({
+          ...p,
+          url: supabase.storage.from('listing-photos').getPublicUrl(p.storage_path).data.publicUrl,
+        }))
       setExistingPhotos(photos)
       setFetching(false)
     }
@@ -156,7 +168,7 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
           status,
         })
         .eq('id', listingId)
-        .eq('seller_id', sellerId)
+        .eq('seller_business_id', sellerId)
 
       if (updateError) throw new Error(updateError.message)
 
@@ -164,12 +176,7 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
       for (const photoId of removedPhotoIds) {
         const photo = existingPhotos.find(p => p.id === photoId)
         if (photo) {
-          // Extract storage path from URL
-          const url = new URL(photo.url)
-          const storagePath = url.pathname.split('/listing-photos/')[1]
-          if (storagePath) {
-            await supabase.storage.from('listing-photos').remove([storagePath])
-          }
+          await supabase.storage.from('listing-photos').remove([photo.storage_path])
         }
         await supabase.from('listing_photos').delete().eq('id', photoId)
       }
@@ -182,18 +189,17 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
       for (let i = 0; i < newPhotos.length; i++) {
         const photo = newPhotos[i]
         const ext   = photo.file.name.split('.').pop() ?? 'jpg'
-        const path  = `${listingId}/${Date.now()}_${i}.${ext}`
+        const path  = `${userId}/${listingId}/${Date.now()}_${i}.${ext}`
 
         const { error: uploadError } = await supabase.storage
           .from('listing-photos')
           .upload(path, photo.file, { upsert: false })
         if (uploadError) throw new Error(`Photo upload failed: ${uploadError.message}`)
 
-        const { data: urlData } = supabase.storage.from('listing-photos').getPublicUrl(path)
         await supabase.from('listing_photos').insert({
-          listing_id: listingId,
-          url:        urlData.publicUrl,
-          sort_order: currentSortMax + 1 + i,
+          listing_id:   listingId,
+          storage_path: path,
+          sort_order:   currentSortMax + 1 + i,
         })
       }
 
@@ -365,7 +371,7 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
                     className="accent-green-600"
                   />
                   <div>
-                    <p className={`text-sm font-medium ${s === 'removed' ? 'text-red-600' : 'text-gray-800'}`}>{STATUS_LABELS[s]}</p>
+                    <p className="text-sm font-medium text-gray-800">{STATUS_LABELS[s]}</p>
                   </div>
                 </label>
               ))}
