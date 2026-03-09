@@ -31,9 +31,20 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protected routes
+  // Redirect logged-in users away from auth pages
   const { pathname } = request.nextUrl
+  const isAuthPage =
+    pathname.startsWith('/sign-in') ||
+    pathname.startsWith('/sign-up')
 
+  if (isAuthPage && user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/listings'
+    url.search = ''
+    return NextResponse.redirect(url)
+  }
+
+  // Protected routes — redirect unauthenticated users to sign-in
   const isProtected =
     pathname.startsWith('/seller') ||
     pathname.startsWith('/admin') ||
