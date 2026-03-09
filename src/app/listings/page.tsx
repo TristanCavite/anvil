@@ -30,6 +30,18 @@ export default async function ListingsPage({
   const { q, category } = await searchParams
   const supabase = await createClient()
 
+  // Find the current user's seller_business id (if any) so we can hide their own listings
+  const { data: { user } } = await supabase.auth.getUser()
+  let ownBusinessId: string | null = null
+  if (user) {
+    const { data: biz } = await supabase
+      .from('seller_business')
+      .select('id')
+      .eq('owner_id', user.id)
+      .maybeSingle()
+    ownBusinessId = biz?.id ?? null
+  }
+
   let query = supabase
     .from('listings')
     .select(`
@@ -41,6 +53,10 @@ export default async function ListingsPage({
     .eq('status', 'active')
     .gt('quantity_available', 0)
     .order('created_at', { ascending: false })
+
+  if (ownBusinessId) {
+    query = query.neq('seller_business_id', ownBusinessId)
+  }
 
   if (q?.trim()) {
     query = query.ilike('title', `%${q.trim()}%`)

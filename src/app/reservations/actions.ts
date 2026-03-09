@@ -11,15 +11,24 @@ export async function createReservation(listingId: string) {
   if (!user) throw new Error('Sign in to reserve items.')
 
   // Fetch listing price snapshot — also confirms it's active
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: listing } = await supabase
     .from('listings')
-    .select('id, price, currency, quantity_available, status')
+    .select('id, price, currency, quantity_available, status, seller_business ( owner_id )')
     .eq('id', listingId)
     .eq('status', 'active')
-    .single()
+    .single() as any
 
   if (!listing) throw new Error('This listing is no longer available.')
   if (listing.quantity_available <= 0) throw new Error('This item is sold out.')
+
+  // Prevent sellers from reserving their own listings
+  const sellerUserId = Array.isArray(listing.seller_business)
+    ? listing.seller_business[0]?.owner_id
+    : listing.seller_business?.owner_id
+  if (sellerUserId === user.id) {
+    throw new Error('You cannot reserve your own listing.')
+  }
 
   // Check buyer hasn't already reserved this listing (active reservation)
   const { data: existing } = await supabase

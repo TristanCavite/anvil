@@ -16,9 +16,11 @@ export default async function ListingDetailPage({
     'id, title, description, category, price, currency',
     'quantity, quantity_available, pickup_start, pickup_end',
     'status, created_at',
-    'seller_business ( id, business_name, address_line, city, province, plus_code )',
+    'seller_business ( id, business_name, address_line, city, province, plus_code, owner_id )',
     'listing_photos ( id, storage_path, sort_order )',
   ].join(', ')
+
+  const { data: { user } } = await supabase.auth.getUser()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: rawListing } = await supabase
@@ -32,6 +34,12 @@ export default async function ListingDetailPage({
   const listing = rawListing as any
 
   if (!listing) notFound()
+
+  // Hide the listing from its own seller
+  const sellerUserId = Array.isArray(listing.seller_business)
+    ? listing.seller_business[0]?.owner_id
+    : listing.seller_business?.owner_id
+  if (user && sellerUserId === user.id) notFound()
 
   const photos = [...(listing.listing_photos ?? [])]
     .sort((a, b) => a.sort_order - b.sort_order)
@@ -50,6 +58,7 @@ export default async function ListingDetailPage({
     city: string | null
     province: string | null
     plus_code: string | null
+    owner_id: string | null
   } | null
 
   function formatDatetime(dt: string | null) {
