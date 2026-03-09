@@ -27,7 +27,7 @@ export default async function SellerListingsPage() {
 
   const { data: listings } = await supabase
     .from('listings')
-    .select('id, title, status, price, currency, quantity, pickup_start, pickup_end, created_at')
+    .select('id, title, status, price, currency, quantity, quantity_available, pickup_start, pickup_end, created_at')
     .eq('seller_business_id', business.id)
     .order('created_at', { ascending: false })
 
@@ -41,10 +41,16 @@ export default async function SellerListingsPage() {
         </div>
         <div className="flex items-center gap-3">
           <Link
+            href="/seller/reservations"
+            className="text-sm text-gray-500 hover:text-gray-700"
+          >
+            Reservations
+          </Link>
+          <Link
             href="/"
             className="text-sm text-gray-500 hover:text-gray-700"
           >
-            ← Home
+            Home
           </Link>
           <Link
             href="/seller/listings/new"
@@ -120,7 +126,10 @@ export default async function SellerListingsPage() {
                     <td className="px-5 py-4 text-gray-700">
                       {listing.currency}&nbsp;{listing.price.toLocaleString()}
                     </td>
-                    <td className="px-5 py-4 text-gray-700">{listing.quantity}</td>
+                    <td className="px-5 py-4 text-gray-700">
+                      {listing.quantity_available}
+                      <span className="text-gray-400">/{listing.quantity}</span>
+                    </td>
                     <td className="px-5 py-4 text-gray-500 hidden sm:table-cell text-xs">
                       {listing.pickup_start
                         ? new Date(listing.pickup_start).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' })
