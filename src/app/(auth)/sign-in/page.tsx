@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from 'lib/supabase/browser'
 
-export default function SignInPage() {
+function SignInForm() {
   const supabase = createClient()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -163,5 +163,13 @@ export default function SignInPage() {
         </Link>
       </p>
     </>
+  )
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<div style={{ textAlign: 'center', padding: '2rem' }}>Loading...</div>}>
+      <SignInForm />
+    </Suspense>
   )
 }
