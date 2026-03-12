@@ -1,3 +1,11 @@
+import './global.css'
+import 'leaflet/dist/leaflet.css'
+
+export const metadata = {
+  title: 'NeighborGoods — Surplus Food Marketplace',
+  description: 'Find affordable surplus food from local sellers near you. Reduce food waste, save money.',
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -5,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="antialiased">{children}</body>
     </html>
   )
 }

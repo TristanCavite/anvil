@@ -24,12 +24,16 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE TABLE IF NOT EXISTS public.profiles (
   id              uuid        PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   display_name    text,
+  avatar_url      text,
+  bio             text,
+  gender          text        CHECK (gender IN ('male', 'female', 'non_binary', 'prefer_not_to_say')),
   phone           text,
-  is_seller       boolean     NOT NULL DEFAULT false,
-  is_admin        boolean     NOT NULL DEFAULT false,
-  suspended_until timestamptz,
-  created_at      timestamptz NOT NULL DEFAULT now(),
-  updated_at      timestamptz NOT NULL DEFAULT now()
+  is_seller             boolean     NOT NULL DEFAULT false,
+  is_admin              boolean     NOT NULL DEFAULT false,
+  onboarding_completed  boolean     NOT NULL DEFAULT false,
+  suspended_until       timestamptz,
+  created_at            timestamptz NOT NULL DEFAULT now(),
+  updated_at            timestamptz NOT NULL DEFAULT now()
 );
 
 COMMENT ON TABLE  public.profiles IS 'User profiles; mirrors auth.users. is_admin is an allowlist — set manually by DBA only.';
