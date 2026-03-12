@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from 'lib/supabase/browser'
 
-export default function SignInPage() {
+function SignInForm() {
   const supabase = createClient()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -163,5 +163,20 @@ export default function SignInPage() {
         </Link>
       </p>
     </>
+  )
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ display: 'flex', justifyContent: 'center', padding: 40 }}>
+        <svg className="animate-spin" style={{ width: 24, height: 24, color: '#16a34a' }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+        </svg>
+      </div>
+    }>
+      <SignInForm />
+    </Suspense>
   )
 }
