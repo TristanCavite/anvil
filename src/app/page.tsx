@@ -4,6 +4,9 @@ import { createClient } from 'lib/supabase/server'
 import SignOutButton from './components/SignOutButton'
 import HomeNav from './components/HomeNav'
 
+export const revalidate = 60 // Cache this page on the edge/server for 60 seconds
+
+
 export default async function Page() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

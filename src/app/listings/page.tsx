@@ -55,7 +55,13 @@ export default async function ListingsPage({
     .order('created_at', { ascending: false })
 
   if (ownBusinessId) query = query.neq('seller_business_id', ownBusinessId)
-  if (q?.trim())     query = query.ilike('title', `%${q.trim()}%`)
+  if (q?.trim()) {
+    // textSearch leverages Postgres GiST/GIN indexes and parses words natively, much faster than ilike
+    query = query.textSearch('title', q.trim().replace(/\s+/g, ' | '), {
+      type: 'websearch',
+      config: 'english'
+    })
+  }
   if (category && category !== 'All') query = query.eq('category', category)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
