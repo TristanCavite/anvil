@@ -17,6 +17,9 @@
 * add leaflet for the location marking during the seller onboarding
 * add open location code dependencies for exact location address(this will use the plus code)
 * update profile page(this will now able to edit the user information(including profile picture)
+* add some functionalities of reservation feature
+* add some functionality to post/draft/delete listing
+* add some temporary listing page to verify that the listing works
 * vercel deployment test
 
 ## AV.010.002 Release Notes
