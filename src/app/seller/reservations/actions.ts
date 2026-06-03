@@ -21,7 +21,9 @@ async function getSellerReservation(reservationId: string) {
 
 export async function acceptReservation(reservationId: string) {
   const { supabase, data } = await getSellerReservation(reservationId)
-  if (data.status !== 'authorized') throw new Error('Reservation is not in an acceptable state.')
+  if (!['pending_authorization', 'authorized'].includes(data.status)) {
+    throw new Error('Reservation is not in an acceptable state.')
+  }
 
   const { error } = await supabase
     .from('reservations')
@@ -34,7 +36,9 @@ export async function acceptReservation(reservationId: string) {
 
 export async function declineReservation(reservationId: string) {
   const { supabase, data } = await getSellerReservation(reservationId)
-  if (!['authorized', 'accepted'].includes(data.status)) throw new Error('Cannot decline at this stage.')
+  if (!['pending_authorization', 'authorized', 'accepted'].includes(data.status)) {
+    throw new Error('Cannot decline at this stage.')
+  }
 
   const { error } = await supabase
     .from('reservations')

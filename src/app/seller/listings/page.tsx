@@ -60,6 +60,17 @@ export default async function SellerListingsPage() {
           {/* Nav */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
             <Link
+              href="/seller/reservations"
+              className="btn-primary-light"
+              style={{ padding: '7px 11px', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}
+              aria-label="Reservation requests"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style={{ width: 16, height: 16 }}>
+                <path fillRule="evenodd" d="M5.5 4A2.5 2.5 0 0 0 3 6.5v7A2.5 2.5 0 0 0 5.5 16h9A2.5 2.5 0 0 0 17 13.5v-7A2.5 2.5 0 0 0 14.5 4h-9Zm.4 2.5a.75.75 0 0 0 0 1.5h8.2a.75.75 0 0 0 0-1.5H5.9Zm0 3a.75.75 0 0 0 0 1.5h8.2a.75.75 0 0 0 0-1.5H5.9Zm0 3a.75.75 0 0 0 0 1.5h5.2a.75.75 0 0 0 0-1.5H5.9Z" clipRule="evenodd" />
+              </svg>
+            </Link>
+
+            <Link
               href="/seller/listings/new"
               className="btn-primary"
               style={{ padding: '7px 11px', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}

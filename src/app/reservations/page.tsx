@@ -12,7 +12,7 @@ const STATUS_META: Record<string, { label: string; borderColor: string; bg: stri
   declined:              { label: 'Declined by seller',          borderColor: '#ef4444', bg: '#fff5f5', badgeBg: '#fee2e2', badgeColor: '#b91c1c' },
   cancelled:             { label: 'Cancelled',                   borderColor: '#94a3b8', bg: '#f8fafc', badgeBg: '#f1f5f9', badgeColor: '#64748b' },
   expired:               { label: 'Expired',                     borderColor: '#f97316', bg: '#fff7ed', badgeBg: '#ffedd5', badgeColor: '#c2410c' },
-  pending_authorization: { label: 'Pending',                     borderColor: '#eab308', bg: '#fefce8', badgeBg: '#fef9c3', badgeColor: '#a16207' },
+  pending_authorization: { label: 'Request sent — waiting for seller', borderColor: '#eab308', bg: '#fefce8', badgeBg: '#fef9c3', badgeColor: '#a16207' },
 }
 
 const CANCELLABLE = new Set(['authorized', 'pending_authorization'])

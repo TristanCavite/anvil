@@ -4,6 +4,7 @@ import { createClient } from 'lib/supabase/server'
 import ReservationActions from './ReservationActions'
 
 const STATUS_STYLES: Record<string, string> = {
+  pending_authorization: 'bg-yellow-50 text-yellow-700',
   authorized: 'bg-blue-50 text-blue-700',
   accepted:   'bg-green-50 text-green-700',
   fulfilled:  'bg-gray-100 text-gray-600',
@@ -13,6 +14,7 @@ const STATUS_STYLES: Record<string, string> = {
 }
 
 const STATUS_LABELS: Record<string, string> = {
+  pending_authorization: 'New request',
   authorized: 'Waiting for you',
   accepted:   'Accepted',
   fulfilled:  'Fulfilled',
@@ -55,8 +57,9 @@ export default async function SellerReservationsPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const rows = (reservations ?? []) as any[]
 
-  const actionable  = rows.filter(r => ['authorized', 'accepted'].includes(r.status))
-  const historical  = rows.filter(r => !['authorized', 'accepted'].includes(r.status))
+  const newRequests = rows.filter(r => r.status === 'pending_authorization')
+  const actionable  = rows.filter(r => ['pending_authorization', 'authorized', 'accepted'].includes(r.status))
+  const historical  = rows.filter(r => !['pending_authorization', 'authorized', 'accepted'].includes(r.status))
 
   function formatDate(dt: string) {
     return new Date(dt).toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -99,7 +102,14 @@ export default async function SellerReservationsPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center justify-between">
         <div>
-          <h1 className="text-base font-semibold text-gray-900">Incoming Reservations</h1>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="text-base font-semibold text-gray-900">Incoming Reservations</h1>
+            {newRequests.length > 0 && (
+              <span className="rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-semibold text-yellow-800">
+                {newRequests.length} new request{newRequests.length === 1 ? '' : 's'}
+              </span>
+            )}
+          </div>
           <p className="text-xs text-gray-500">{business.business_name}</p>
         </div>
         <Link href="/seller/listings" className="text-sm text-gray-500 hover:text-gray-800">
@@ -108,6 +118,15 @@ export default async function SellerReservationsPage() {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-8">
+        {newRequests.length > 0 && (
+          <section className="rounded-2xl border border-yellow-200 bg-yellow-50 px-5 py-4 text-sm text-yellow-900 shadow-sm">
+            <p className="font-semibold">You have {newRequests.length} new reservation request{newRequests.length === 1 ? '' : 's'} waiting for review.</p>
+            <p className="mt-1 text-yellow-800">
+              Review the buyer details below, then accept or decline each request before pickup.
+            </p>
+          </section>
+        )}
+
         {/* Action required */}
         <section>
           <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
