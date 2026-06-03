@@ -42,7 +42,8 @@ export default function NewListingPage() {
   // Form state
   const [title, setTitle]           = useState('')
   const [description, setDescription] = useState('')
-  const [category, setCategory]     = useState(CATEGORIES[0])
+  const [category, setCategory] = useState('')
+const [categoryOpen, setCategoryOpen] = useState(false)
   const [price, setPrice]           = useState('')
   const [quantity, setQuantity]     = useState('1')
   const [pickupStart, setPickupStart] = useState('')
@@ -305,20 +306,75 @@ export default function NewListingPage() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-gray-700" htmlFor="category">Category *</label>
-              <select
-                id="category"
-                required
-                value={category}
-                onChange={e => setCategory(e.target.value)}
-                disabled={loading}
-                className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50 bg-white"
-              >
-                {CATEGORIES.map(c => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </div>
+  <label className="text-sm font-medium text-gray-700">
+    Category *
+  </label>
+
+  <div className="relative">
+    <button
+      type="button"
+      disabled={loading}
+      onClick={() => setCategoryOpen(prev => !prev)}
+      className={`flex w-full items-center justify-between rounded-2xl border bg-white px-4 py-3 text-left text-sm shadow-sm outline-none transition
+        ${
+          category
+            ? 'border-gray-300 text-gray-900'
+            : 'border-gray-300 text-gray-400'
+        }
+        ${
+          categoryOpen
+            ? 'border-green-500 ring-4 ring-green-500/10'
+            : 'hover:border-gray-400'
+        }
+        disabled:cursor-not-allowed disabled:bg-gray-50`}
+    >
+      <span>{category || 'Select food category'}</span>
+
+      <svg
+        className={`h-4 w-4 text-gray-400 transition-transform ${
+          categoryOpen ? 'rotate-180' : ''
+        }`}
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
+      >
+        <path
+          fillRule="evenodd"
+          d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z"
+          clipRule="evenodd"
+        />
+      </svg>
+    </button>
+
+    {categoryOpen && (
+      <div className="absolute z-50 mt-2 max-h-64 w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+        <div className="max-h-64 overflow-y-auto p-1">
+          {CATEGORIES.map(c => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => {
+                setCategory(c)
+                setCategoryOpen(false)
+              }}
+              className={`w-full rounded-xl px-3 py-2.5 text-left text-sm transition
+                ${
+                  category === c
+                    ? 'bg-green-50 font-semibold text-green-700'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <input type="hidden" name="category" value={category} required />
+  </div>
+</div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
@@ -350,7 +406,7 @@ export default function NewListingPage() {
                   value={quantity}
                   onChange={e => setQuantity(e.target.value)}
                   disabled={loading}
-                  className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm placeholder-gray-400 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50"
+                  className="rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-500 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50"
                 />
               </div>
             </div>
@@ -371,7 +427,7 @@ export default function NewListingPage() {
                   value={pickupStart}
                   onChange={e => setPickupStart(e.target.value)}
                   disabled={loading}
-                  className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50"
+                  className="rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -383,7 +439,7 @@ export default function NewListingPage() {
                   min={pickupStart}
                   onChange={e => setPickupEnd(e.target.value)}
                   disabled={loading}
-                  className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50"
+                  className="rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50"
                 />
               </div>
             </div>
