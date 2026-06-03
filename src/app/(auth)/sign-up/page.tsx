@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { createClient } from 'lib/supabase/browser'
+import { getAppUrl } from 'lib/app-url'
 
 type FormState = 'idle' | 'loading' | 'success'
 
@@ -26,7 +27,7 @@ export default function SignUpPage() {
       password,
       options: {
         data: { full_name: displayName },
-        emailRedirectTo: `${location.origin}/auth/callback`,
+          emailRedirectTo: `${getAppUrl()}/auth/callback`,
       },
     })
 

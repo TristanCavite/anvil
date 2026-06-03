@@ -4,7 +4,8 @@ import type { EmailOtpType } from '@supabase/supabase-js'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
-  const next = searchParams.get('next') ?? '/'
+  const isRecovery = searchParams.get('type') === 'recovery'
+  const next = searchParams.get('next') ?? (isRecovery ? '/reset-password' : '/')
 
   const supabase = await createClient()
 
