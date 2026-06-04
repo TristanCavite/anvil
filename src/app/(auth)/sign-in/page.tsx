@@ -95,7 +95,7 @@ function SignInForm() {
             <label htmlFor="password" style={{ fontSize: '0.8rem', fontWeight: 600, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               Password
             </label>
-            <span style={{ fontSize: '0.8rem', color: '#9ca3af', cursor: 'not-allowed', userSelect: 'none' }}>Forgot password?</span>
+            <span> <Link href="/forgot-password" style={{ fontSize: '0.8rem', color: '#9ca3af', userSelect: 'none' }}>Forgot password?</Link></span>
           </div>
           <div style={{ position: 'relative' }}>
             <input
