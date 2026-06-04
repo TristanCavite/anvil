@@ -30,7 +30,7 @@ export default function ReservationActions({ reservationId, status }: Props) {
 
   return (
     <div className="flex flex-col gap-1.5 items-end">
-      {status === 'authorized' && (
+      {['pending_authorization', 'authorized'].includes(status) && (
         <>
           <button
             onClick={() => run(() => acceptReservation(reservationId), 'accept')}

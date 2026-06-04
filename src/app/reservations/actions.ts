@@ -2,7 +2,6 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from 'lib/supabase/server'
-import { createAdminClient } from 'lib/supabase/admin'
 
 // ─── Buyer: create a reservation ─────────────────────────────────────────────
 export async function createReservation(listingId: string) {
@@ -41,8 +40,9 @@ export async function createReservation(listingId: string) {
 
   if (existing) throw new Error('You already have an active reservation for this item.')
 
-  // Insert as pending_authorization (required by RLS INSERT policy)
-  // The DB trigger will decrement quantity_available automatically
+  // Insert as pending_authorization (required by RLS INSERT policy).
+  // The DB trigger will decrement quantity_available automatically,
+  // and the seller dashboard will surface the new request.
   const { data: reservation, error: insertErr } = await supabase
     .from('reservations')
     .insert({
@@ -63,15 +63,9 @@ export async function createReservation(listingId: string) {
     throw new Error(insertErr?.message ?? 'Failed to create reservation.')
   }
 
-  // Advance to 'authorized' via admin client (skips Stripe in v1)
-  const admin = createAdminClient()
-  await admin
-    .from('reservations')
-    .update({ status: 'authorized' })
-    .eq('id', reservation.id)
-
   revalidatePath(`/listings/${listingId}`)
   revalidatePath('/reservations')
+  revalidatePath('/seller/reservations')
   return reservation.id
 }
 

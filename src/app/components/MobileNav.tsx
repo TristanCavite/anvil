@@ -45,7 +45,10 @@ export default function MobileNav({ user, isSeller }: MobileNavProps) {
               <Link className="mobile-menu-link" href="/reservations" onClick={() => setOpen(false)}>📦 My Reservations</Link>
               <Link className="mobile-menu-link" href="/profile" onClick={() => setOpen(false)}>👤 Profile</Link>
               {isSeller
-                ? <Link className="mobile-menu-link" href="/seller/listings" onClick={() => setOpen(false)}>📊 Seller Dashboard</Link>
+                ? <>
+                    <Link className="mobile-menu-link" href="/seller/listings" onClick={() => setOpen(false)}>📊 Seller Dashboard</Link>
+                    <Link className="mobile-menu-link" href="/seller/reservations" onClick={() => setOpen(false)}>📝 Reservation Requests</Link>
+                  </>
                 : <Link className="mobile-menu-link" href="/seller/onboarding" onClick={() => setOpen(false)}>🚀 Start Selling</Link>
               }
               <div style={{ marginTop: 8, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
