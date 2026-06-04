@@ -383,7 +383,7 @@ export default function NewListingPage() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 disabled={loading}
-                className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm placeholder-gray-400 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50"
+                className="input-field"
               />
             </div>
 
@@ -402,7 +402,8 @@ export default function NewListingPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 disabled={loading}
-                className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm placeholder-gray-400 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50 resize-none"
+                className="input-field"
+                style={{ resize: 'none' }}
               />
             </div>
 
@@ -491,9 +492,6 @@ export default function NewListingPage() {
                   Price (PHP) *
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-gray-400">
-                    ₱
-                  </span>
                   <input
                     id="price"
                     type="number"
@@ -504,7 +502,7 @@ export default function NewListingPage() {
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     disabled={loading}
-                    className="w-full rounded-lg border border-gray-300 pl-8 pr-3.5 py-2.5 text-sm placeholder-gray-400 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50"
+                    className="input-field"
                   />
                 </div>
               </div>
@@ -524,7 +522,7 @@ export default function NewListingPage() {
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
                   disabled={loading}
-                  className="rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-500 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50"
+                  className="input-field"
                 />
               </div>
             </div>
