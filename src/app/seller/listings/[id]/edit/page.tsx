@@ -301,20 +301,44 @@ export default function EditListingPage() {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-gray-700" htmlFor="title">Title *</label>
-              <input id="title" type="text" required maxLength={120} value={title} onChange={e => setTitle(e.target.value)} disabled={loading}
-                className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm placeholder-gray-400 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50" />
+              <input
+                id="title"
+                type="text"
+                required
+                maxLength={120}
+                placeholder="e.g. Day-old pandesal — 12 pcs"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+                disabled={loading}
+                className="input-field"
+              />
             </div>
 
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-gray-700" htmlFor="description">Description</label>
-              <textarea id="description" rows={3} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)} disabled={loading}
-                className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm placeholder-gray-400 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50 resize-none" />
+              <textarea
+                id="description"
+                rows={3}
+                maxLength={2000}
+                placeholder="Describe the food, ingredients, allergens, or any other details buyers should know."
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                disabled={loading}
+                className="input-field"
+                style={{ resize: 'none' }}
+              />
             </div>
 
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-gray-700" htmlFor="category">Category *</label>
-              <select id="category" required value={category} onChange={e => setCategory(e.target.value)} disabled={loading}
-                className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50 bg-white">
+              <select
+                id="category"
+                required
+                value={category}
+                onChange={e => setCategory(e.target.value)}
+                disabled={loading}
+                className="input-field bg-white"
+              >
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
@@ -323,15 +347,33 @@ export default function EditListingPage() {
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium text-gray-700" htmlFor="price">Price (PHP) *</label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-gray-400">₱</span>
-                  <input id="price" type="number" required min="0" step="0.01" value={price} onChange={e => setPrice(e.target.value)} disabled={loading}
-                    className="w-full rounded-lg border border-gray-300 pl-8 pr-3.5 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50" />
+                  <input
+                    id="price"
+                    type="number"
+                    required
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    value={price}
+                    onChange={e => setPrice(e.target.value)}
+                    disabled={loading}
+                    className="input-field pl-8"
+                  />
                 </div>
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium text-gray-700" htmlFor="quantity">Quantity *</label>
-                <input id="quantity" type="number" required min="1" step="1" value={quantity} onChange={e => setQuantity(e.target.value)} disabled={loading}
-                  className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50" />
+                <input
+                  id="quantity"
+                  type="number"
+                  required
+                  min="1"
+                  step="1"
+                  value={quantity}
+                  onChange={e => setQuantity(e.target.value)}
+                  disabled={loading}
+                  className="input-field"
+                />
               </div>
             </div>
           </section>
@@ -342,13 +384,26 @@ export default function EditListingPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium text-gray-700" htmlFor="pickupStart">From</label>
-                <input id="pickupStart" type="datetime-local" value={pickupStart} onChange={e => setPickupStart(e.target.value)} disabled={loading}
-                  className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50" />
+                <input
+                  id="pickupStart"
+                  type="datetime-local"
+                  value={pickupStart}
+                  onChange={e => setPickupStart(e.target.value)}
+                  disabled={loading}
+                  className="input-field"
+                />
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-sm font-medium text-gray-700" htmlFor="pickupEnd">Until</label>
-                <input id="pickupEnd" type="datetime-local" value={pickupEnd} min={pickupStart} onChange={e => setPickupEnd(e.target.value)} disabled={loading}
-                  className="rounded-lg border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 disabled:bg-gray-50" />
+                <input
+                  id="pickupEnd"
+                  type="datetime-local"
+                  value={pickupEnd}
+                  min={pickupStart}
+                  onChange={e => setPickupEnd(e.target.value)}
+                  disabled={loading}
+                  className="input-field"
+                />
               </div>
             </div>
           </section>
