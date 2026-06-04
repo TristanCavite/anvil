@@ -591,10 +591,10 @@ export default function NewListingPage() {
                 role="switch"
                 aria-checked={publish}
                 onClick={() => setPublish((p) => !p)}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full transition-colors ${publish ? "bg-green-600" : "bg-gray-200"}`}
+                className={`relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors ${publish ? "bg-green-600" : "bg-gray-200"}`}
               >
                 <span
-                  className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${publish ? "translate-x-[22px]" : "translate-x-0.5"} my-0.5`}
+                  className={`inline-block h-5 w-5 rounded-full bg-white shadow transition-transform ${publish ? "translate-x-5.5" : "translate-x-0.5"} my-0.5`}
                 />
               </button>
             </label>
