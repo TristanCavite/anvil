@@ -7,19 +7,22 @@ import { createReservation } from 'app/reservations/actions'
 export default function ReserveButton({
   listingId,
   isSoldOut,
+  maxQuantity,
 }: {
   listingId: string
   isSoldOut: boolean
+  maxQuantity: number
 }) {
   const router  = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState<string | null>(null)
+  const [quantity, setQuantity] = useState('1')
 
   async function handleReserve() {
     setLoading(true)
     setError(null)
     try {
-      await createReservation(listingId)
+      await createReservation(listingId, Number(quantity))
       router.push('/reservations')
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Something went wrong.')
@@ -37,6 +40,25 @@ export default function ReserveButton({
 
   return (
     <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3">
+        <label htmlFor="reservation-quantity" className="text-sm font-medium text-gray-700">
+          Quantity
+        </label>
+        <input
+          id="reservation-quantity"
+          type="number"
+          min="1"
+          max={maxQuantity}
+          step="1"
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.value)}
+          disabled={loading}
+          className="input-global text-center border-gray=300"
+        />
+        <span className="text-xs text-gray-500">
+          Max {maxQuantity}
+        </span>
+      </div>
       <button
         onClick={handleReserve}
         disabled={loading}

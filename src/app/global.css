@@ -212,6 +212,9 @@ body {
   box-shadow: 0 0 0 3px rgba(34,197,94,0.15);
 }
 .input-field:disabled { background: #f9fafb; color: #9ca3af; }
+.input-global {
+  color: var(--foreground);
+}
 
 /* Glass nav */
 .glass-nav {

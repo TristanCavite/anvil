@@ -24,6 +24,7 @@ export default async function ReservationChatPage({ params }: PageProps) {
     .select(`
       id,
       status,
+      quantity,
       buyer_id,
       listings (
         id,
@@ -124,6 +125,7 @@ export default async function ReservationChatPage({ params }: PageProps) {
       sellerName={sellerName}
       buyerAvatarUrl={buyerAvatarUrl}
       sellerAvatarUrl={sellerAvatarUrl}
+      reservationQuantity={reservation.quantity ?? 1}
       buyerProfile={{
         name: buyerName,
         avatarUrl: buyerAvatarUrl,
