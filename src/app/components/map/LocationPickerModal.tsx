@@ -217,7 +217,7 @@ export default function LocationPickerModal({ initialLat, initialLng, onConfirm,
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="card-light w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
@@ -242,7 +242,7 @@ export default function LocationPickerModal({ initialLat, initialLng, onConfirm,
               value={search}
               onChange={e => setSearch(e.target.value)}
               onKeyDown={handleSearchKeyDown}
-              className="flex-1 rounded-lg border border-gray-300 px-3.5 py-2 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+              className="input-field"
             />
             {/* Use my location button */}
             <button
@@ -347,7 +347,7 @@ export default function LocationPickerModal({ initialLat, initialLng, onConfirm,
               type="text"
               value={addressFields.address_line}
               onChange={e => setAddressFields(f => ({ ...f, address_line: e.target.value }))}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+              className="input-field"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -356,7 +356,7 @@ export default function LocationPickerModal({ initialLat, initialLng, onConfirm,
               type="text"
               value={addressFields.city}
               onChange={e => setAddressFields(f => ({ ...f, city: e.target.value }))}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+              className="input-field"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -365,7 +365,7 @@ export default function LocationPickerModal({ initialLat, initialLng, onConfirm,
               type="text"
               value={addressFields.province}
               onChange={e => setAddressFields(f => ({ ...f, province: e.target.value }))}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+              className="input-field"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -374,7 +374,7 @@ export default function LocationPickerModal({ initialLat, initialLng, onConfirm,
               type="text"
               value={addressFields.postal_code}
               onChange={e => setAddressFields(f => ({ ...f, postal_code: e.target.value }))}
-              className="rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20"
+              className="input-field"
             />
           </div>
           {markerPos && (

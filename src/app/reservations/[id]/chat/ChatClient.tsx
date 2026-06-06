@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Send, X, Phone, UserRound, Info, Smile } from "lucide-react";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { createClient } from "lib/supabase/browser";
+import { increaseReservationQuantity } from "app/reservations/actions";
 
 type ChatMessage = {
   id: string;
@@ -33,6 +35,7 @@ type ChatClientProps = {
   sellerName: string;
   buyerAvatarUrl: string | null;
   sellerAvatarUrl: string | null;
+  reservationQuantity: number;
   buyerProfile: ChatProfile;
   sellerProfile: ChatProfile;
   chatName: string;
@@ -52,6 +55,7 @@ export default function ChatClient({
   sellerName,
   buyerAvatarUrl,
   sellerAvatarUrl,
+  reservationQuantity,
   buyerProfile,
   sellerProfile,
   chatName,
@@ -61,12 +65,14 @@ export default function ChatClient({
   backHref,
 }: ChatClientProps) {
   const supabase = createClient();
+  const router = useRouter();
 
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [body, setBody] = useState("");
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [openProfile, setOpenProfile] = useState<ChatProfile | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [quantityError, setQuantityError] = useState<string | null>(null);
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -158,6 +164,21 @@ export default function ChatClient({
     });
   }
 
+  function handleIncreaseQuantity() {
+    setQuantityError(null);
+
+    startTransition(async () => {
+      try {
+        await increaseReservationQuantity(reservationId);
+        router.refresh();
+      } catch (error) {
+        setQuantityError(
+          error instanceof Error ? error.message : "Failed to update quantity."
+        );
+      }
+    });
+  }
+
   function ProfileAvatar({
     senderId,
     senderName,
@@ -224,7 +245,7 @@ export default function ChatClient({
               <h1 className="text-lg font-bold text-gray-900">Messages</h1>
 
               <p className="mt-0.5 truncate text-sm text-gray-500">
-                {listingTitle} · {chatName}
+                {listingTitle} · {chatName} · {reservationQuantity} unit{reservationQuantity === 1 ? "" : "s"}
               </p>
             </div>
           </div>
@@ -313,6 +334,36 @@ export default function ChatClient({
             </div>
           )}
         </div>
+
+        {currentUserId === buyerId && (
+          <div className="mt-3 rounded-3xl border border-emerald-100 bg-emerald-50 px-4 py-3 shadow-sm">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-emerald-900">
+                  Reserved units: {reservationQuantity}
+                </p>
+                <p className="mt-0.5 text-xs text-emerald-700">
+                  Need one more? Add it here if stock is still available.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleIncreaseQuantity}
+                disabled={isPending}
+                className="inline-flex h-10 items-center justify-center rounded-2xl bg-emerald-600 px-4 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isPending ? "Updating…" : "Add 1 unit"}
+              </button>
+            </div>
+
+            {quantityError && (
+              <p className="mt-2 text-xs font-medium text-red-600">
+                {quantityError}
+              </p>
+            )}
+          </div>
+        )}
 
         <div className="relative mt-3 flex items-end gap-2 rounded-3xl border border-gray-200 bg-white p-2 shadow-sm">
           {emojiOpen && (

@@ -184,7 +184,11 @@ export default async function ListingDetailPage({
             )}
 
             {/* Reserve CTA */}
-            <ReserveButton listingId={listing.id} isSoldOut={isSoldOut} />
+            <ReserveButton
+              listingId={listing.id}
+              isSoldOut={isSoldOut}
+              maxQuantity={listing.quantity_available}
+            />
           </div>
 
         </div>

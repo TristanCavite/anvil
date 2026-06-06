@@ -80,7 +80,7 @@ export default async function BuyerReservationsPage() {
     .from("reservations")
     .select(
       `
-      id, status, price_snapshot, currency, created_at, expires_at,
+      id, status, quantity, price_snapshot, currency, created_at, expires_at,
       listings (
         id, title, pickup_start, pickup_end,
         listing_photos ( storage_path, sort_order ),
@@ -358,6 +358,9 @@ export default async function BuyerReservationsPage() {
                             {seller.city ? ` · ${seller.city}` : ""}
                           </p>
                         )}
+                        <p style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: 2 }}>
+                          Units: {r.quantity ?? 1}
+                        </p>
                       </div>
                       <span
                         style={{
