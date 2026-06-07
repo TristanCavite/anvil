@@ -43,7 +43,7 @@ export default async function SellerReservationsPage() {
     .from("reservations")
     .select(
       `
-      id, status, price_snapshot, currency, created_at,
+      id, status, quantity, price_snapshot, currency, created_at,
       listings ( id, title ),
       profiles!buyer_id ( display_name, phone )
     `,
@@ -96,8 +96,8 @@ export default async function SellerReservationsPage() {
             </Link>
 
             <p className="mt-1 text-xs text-gray-500">
-              Buyer: {buyer?.display_name ?? "Unknown"}
-              {buyer?.phone ? ` · ${buyer.phone}` : ""}
+              ₱{Number(r.price_snapshot).toLocaleString()} · {" "}
+              {formatDate(r.created_at)} · Qty {r.quantity ?? 1}
             </p>
 
             <p className="mt-1 text-xs text-gray-400">
