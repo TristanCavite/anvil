@@ -27,6 +27,9 @@ export default function ReserveButton({
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Something went wrong.')
       setLoading(false)
+      setTimeout(() => {
+        router.push('/sign-in')
+      }, 2000)
     }
   }
 
@@ -70,7 +73,7 @@ export default function ReserveButton({
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
           </svg>
         )}
-        {loading ? 'Reserving…' : 'Reserve this item'}
+        {loading ? 'Reserving…' : 'Reserve'}
       </button>
       {error && (
         <p className="text-xs text-red-600 text-center">{error}</p>
