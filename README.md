@@ -9,7 +9,16 @@
 | AV.010.001            | 2026-02-27    |
 | AV.010.002            | 2026-03-10    |
 | AV.010.003            | 2026-03-14    |
+| AV.010.004            | 2026-06-05    |
 | ...                   | ...           |
+## AV.010.004 Release Notes
+* update README
+* implement a chat feature for each transaction of buyer and seller
+* able to change account password
+* seller can now accept reservations
+* Some placeholder now depends on the global css
+* add some functionality to post/draft/delete listing
+* the website can now send 30 per hour email
 ## AV.010.003 Release Notes
 * update README
 * implement seller onboarding page
